@@ -10,9 +10,14 @@ import java.net.URISyntaxException;
 public class Main {
 
     public static void main(String[] args) {
-        CATest test = new CATest();
-        test.init();
-        test.test();
+        //CATest test = new CATest();
+        //test.init();
+        //test.test();
+
+        DRMTest test2 = new DRMTest();
+        test2.init();
+        test2.test();
+
 
     }
 }

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.netscape.cmscore.extensions.KeyUsage;
+import com.netscape.cmstools.CRMFPopClient;
 import org.mozilla.jss.CryptoManager;
 import org.mozilla.jss.crypto.AlreadyInitializedException;
 import org.mozilla.jss.crypto.CryptoToken;
@@ -36,16 +37,8 @@ import com.netscape.cms.servlet.cert.FilterBuilder;
 /**
  * Created by SB on 09.10.15.
  */
-public class CATest {
+public class CATest extends Test {
 
-    String protocol = "http";
-    String host = "localhost.localdomain";
-    int port = 8080;
-
-    private String dbDir = "/home/marcin/.mozilla/firefox/91erqwkz.default";
-    private String nickname = "caadmin";//???
-    private String pass = "12345678";//????
-    private String tokenPassword = "12345678";
     private CAClient client;
     private CertClient certClient;
     private ProfileClient profileClient;
@@ -105,61 +98,65 @@ public class CATest {
 
     public void test()
     {
-        Collection<CertRequestInfo> list = null;
-        try {
-            list = certClient.listRequests("complete", null, null, null, null, null).getEntries();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        Collection<CertRequestInfo> list = null;
+//        try {
+//            list = certClient.listRequests("complete", null, null, null, null, null).getEntries();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        printRequests(list);
+//
+//        //Get a CertInfo
+//        int certIdToPrint = 1;
+//        CertId id = new CertId(certIdToPrint);
+//        CertData certData = null;
+//        try {
+//            certData = certClient.getCert(id);
+//        } catch (CertNotFoundException e) {
+//            e.printStackTrace();
+//            log("Cert: " + certIdToPrint + " not found. \n" + e.toString());
+//        }
+//
+//        printCertificate(certData);
+//
+//        //Try an invalid Cert to print out
+//        //Get a CertInfo
+//        int certIdBadToPrint = 9999999;
+//        CertId certIdBad = new CertId(certIdBadToPrint);
+//        CertData certDataBad = null;
+//        try {
+//            certDataBad = certClient.getCert(certIdBad);
+//        } catch (CertNotFoundException e) {
+//            e.printStackTrace();
+//            log("Cert: " + certIdBadToPrint + " not found. \n" + e.toString());
+//        }
+//
+//        printCertificate(certDataBad);
+//
+//        //Get a CertInfoList
+//
+//        CertDataInfos infos = null;
+//        try {
+//            infos = certClient.listCerts("VALID", null, null, null, null);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
-        printRequests(list);
-
-        //Get a CertInfo
-        int certIdToPrint = 1;
-        CertId id = new CertId(certIdToPrint);
-        CertData certData = null;
-        try {
-            certData = certClient.getCert(id);
-        } catch (CertNotFoundException e) {
-            e.printStackTrace();
-            log("Cert: " + certIdToPrint + " not found. \n" + e.toString());
-        }
-
-        printCertificate(certData);
-
-        //Try an invalid Cert to print out
-        //Get a CertInfo
-        int certIdBadToPrint = 9999999;
-        CertId certIdBad = new CertId(certIdBadToPrint);
-        CertData certDataBad = null;
-        try {
-            certDataBad = certClient.getCert(certIdBad);
-        } catch (CertNotFoundException e) {
-            e.printStackTrace();
-            log("Cert: " + certIdBadToPrint + " not found. \n" + e.toString());
-        }
-
-        printCertificate(certDataBad);
-
-        //Get a CertInfoList
-
-        CertDataInfos infos = null;
-        try {
-            infos = certClient.listCerts("VALID", null, null, null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        printCertInfos(infos, "no search filter:");
+//        printCertInfos(infos, "no search filter:");
 
         //Initiate a Certificate Enrollment
 
-        CertEnrollmentRequest data = createUserCertEnrollment();
+        CertEnrollmentRequest data = createUserEncryptionCertEnrollment();
         enrollAndApproveCertRequest(certClient, data);
 
+
+//        CertEnrollmentRequest data = createUserCertEnrollment();
+//        enrollAndApproveCertRequest(certClient, data);
+
         // submit a RA authenticated user cert request
-        CertEnrollmentRequest rdata = createRAUserCertEnrollment();
-        enrollCertRequest(certClient, rdata);
+        //CertEnrollmentRequest rdata = createRAUserCertEnrollment();
+        //enrollCertRequest(certClient, rdata);
 
         // now try a manually approved server cert
         CertEnrollmentRequest serverData = createServerCertEnrollment();
@@ -171,53 +168,62 @@ public class CATest {
 
         //Perform a sample certificate search with advanced search terms
 
-        CertSearchRequest searchData = new CertSearchRequest();
-        searchData.setSerialNumberRangeInUse(true);
-        searchData.setSerialFrom("9999");
-        searchData.setSerialTo("99990");
+//        CertSearchRequest searchData = new CertSearchRequest();
+//        searchData.setSerialNumberRangeInUse(true);
+//        searchData.setSerialFrom("9999");
+//        searchData.setSerialTo("99990");
+//
+//        infos = certClient.findCerts(searchData, 100, 10);
+//
+//        printCertInfos(infos, new FilterBuilder(searchData).buildFilter());
+//
+//        // Try to get a non existing request
+//
+//        RequestId idBad = new RequestId("999999");
+//
+//        CertRequestInfo infoBad = null;
+//
+//        try {
+//            infoBad = certClient.getRequest(idBad);
+//        } catch (RequestNotFoundException e) {
+//            e.printStackTrace();
+//            log("Exception getting request #: " + idBad.toString() + "\n" + e.toString());
+//        }
+//
+//        printRequestInfo(infoBad);
+//
+//        //Perform another sample certificate search with advanced search terms
+//
+//        searchData = new CertSearchRequest();
+//        searchData.setSubjectInUse(true);
+//        searchData.setEmail("jmagne@redhat.com");
+//        searchData.setMatchExactly(true);
+//
+//        infos = certClient.findCerts(searchData, 100, 10);
+//
+//        printCertInfos(infos, new FilterBuilder(searchData).buildFilter());
+//
+//        //Get a list of Profiles
+//
+//        ProfileDataInfos pInfos = profileClient.listProfiles(null, null);
+//
+//        printProfileInfos(pInfos);
+//
+//        // Get a specific profile
+//        String pId = "caUserCert";
+//        ProfileData pData = profileClient.retrieveProfile(pId);
+//
+//        printProfileData(pData);
 
-        infos = certClient.findCerts(searchData, 100, 10);
+    }
 
-        printCertInfos(infos, new FilterBuilder(searchData).buildFilter());
+    private CertEnrollmentRequest createUserEncryptionCertEnrollment() {
+        CRMFPopClient popClient = new CRMFPopClient();
+        //popClient.wrapPrivateKey()
 
-        // Try to get a non existing request
 
-        RequestId idBad = new RequestId("999999");
 
-        CertRequestInfo infoBad = null;
-
-        try {
-            infoBad = certClient.getRequest(idBad);
-        } catch (RequestNotFoundException e) {
-            e.printStackTrace();
-            log("Exception getting request #: " + idBad.toString() + "\n" + e.toString());
-        }
-
-        printRequestInfo(infoBad);
-
-        //Perform another sample certificate search with advanced search terms
-
-        searchData = new CertSearchRequest();
-        searchData.setSubjectInUse(true);
-        searchData.setEmail("jmagne@redhat.com");
-        searchData.setMatchExactly(true);
-
-        infos = certClient.findCerts(searchData, 100, 10);
-
-        printCertInfos(infos, new FilterBuilder(searchData).buildFilter());
-
-        //Get a list of Profiles
-
-        ProfileDataInfos pInfos = profileClient.listProfiles(null, null);
-
-        printProfileInfos(pInfos);
-
-        // Get a specific profile
-        String pId = "caUserCert";
-        ProfileData pData = profileClient.retrieveProfile(pId);
-
-        printProfileData(pData);
-
+        return null;
     }
 
     private static void enrollAndApproveCertRequest(CertClient client, CertEnrollmentRequest data) {
